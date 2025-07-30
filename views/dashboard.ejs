@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>لوحة التحكم - قائمة الأغاني</title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      font-family: Tahoma;
+      background-color: #f9f9f9;
+      padding: 30px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: right;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    a, button {
+      padding: 5px 10px;
+      border: none;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    button.copy-btn {
+      background-color: #28a745;
+      margin-right: 5px;
+    }
+
+    button.copy-btn:hover {
+      background-color: #218838;
+    }
+
+    audio {
+      width: 100%;
+      max-width: 250px;
+    }
+
+    .title {
+      font-weight: bold;
+    }
+
+    form.upload-form {
+      margin-bottom: 30px;
+      background: white;
+      padding: 20px;
+      box-shadow: 0 0 10px #ccc;
+      border-radius: 8px;
+    }
+
+    form.upload-form input, form.upload-form button, form.upload-form select {
+      padding: 10px;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 16px;
+    }
+
+    form.upload-form label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>رفع أغنية جديدة</h1>
+
+  <form class="upload-form" action="/upload" method="POST" enctype="multipart/form-data">
+    <label>اسم الأغنية:</label>
+    <input type="text" name="title" required>
+
+    <label>اسم الفنان:</label>
+    <input type="text" name="artist" required>
+
+    <label>ملف الأغنية (MP3):</label>
+    <input type="file" name="song" accept=".mp3" required>
+
+    <!-- ✅ اختيار خصوصية الأغنية -->
+    <label>خصوصية الأغنية:</label>
+    <select name="visibility" required>
+      <option value="public">عام - يمكن تحميل الأغنية</option>
+      <option value="private">خاص - لا يمكن تحميل الأغنية</option>
+    </select>
+
+    <button type="submit">رفع الأغنية</button>
+  </form>
+
+  <h1>قائمة الأغاني المرفوعة</h1>
+
+  <table>
+    <tr>
+      <th>الاسم</th>
+      <th>الفنان</th>
+      <th>تاريخ الرفع</th>
+      <th>تشغيل</th>
+      <th>رابط المشاركة</th>
+      <th>حذف</th>
+    </tr>
+
+    <% songs.forEach(song => { %>
+      <tr>
+        <td class="title"><%= song.title %></td>
+        <td><%= song.artist || 'غير معروف' %></td>
+        <td><%= new Date(song.uploaded_at).toLocaleDateString('ar-EG') %></td>
+        <td>
+          <audio controls>
+            <source src="<%= song.filename %>" type="audio/mpeg">
+          </audio>
+        </td>
+        <td>
+          <div>
+            <a href="/song/<%= song.url_code %>" target="_blank">رابط المشاركة</a>
+            <button class="copy-btn" onclick="copyLink('<%= song.url_code %>')">نسخ</button>
+          </div>
+        </td>
+        <td>
+          <form method="POST" action="/delete/<%= song.id %>" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+            <button type="submit">حذف</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <script>
+    function copyLink(code) {
+      const fullUrl = `${window.location.origin}/song/${code}`;
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        alert("✅ تم نسخ رابط المشاركة!");
+      });
+    }
+  </script>
+
+</body>
+</html>

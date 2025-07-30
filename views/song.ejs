@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title><%= song.title %></title>
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      padding: 40px;
+      background-color: #f8f8f8;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 0 15px #ccc;
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .artist {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    button, a.download-btn {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 15px;
+    }
+
+    button:hover, a.download-btn:hover {
+      background-color: #0056b3;
+    }
+
+    audio {
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 80%;
+      max-width: 400px;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2><%= song.title %></h2>
+    <div class="artist">الفنان: <%= song.artist || 'غير معروف' %></div>
+
+    <!-- ✅ تشغيل الأغنية من رابط Firebase مباشرة -->
+    <audio controls>
+      <source src="<%= song.filename %>" type="audio/mpeg">
+      المتصفح لا يدعم تشغيل الصوت.
+    </audio>
+
+    <div>
+      <!-- ✅ رابط التحميل مباشرة -->
+      <% if (song.visibility === 'public') { %>
+       <a class="download-btn" href="<%= song.filename %>" download>📥 تحميل الأغنية</a>
+       <% } else { %>
+      <button class="download-btn" disabled style="background-color: gray; cursor: not-allowed;">
+      🔒 الأغنية خاصة ولا يمكن تحميلها
+      </button>
+      <% } %>
+      <button onclick="copyLink()">🔗 نسخ رابط المشاركة</button>
+    </div>
+
+  </div>
+
+  <script>
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        alert("✅ تم نسخ رابط المشاركة!");
+      });
+    }
+  </script>
+</body>
+</html>
