@@ -1,3 +1,4 @@
+✅ Firebase Initialized with Bucket: wadd-f0a19.appspot.com
 const admin = require('firebase-admin');
 
 // استخدام قاعدة البيانات الفعلية
