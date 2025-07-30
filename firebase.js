@@ -3,17 +3,14 @@ const fs = require('fs');
 const path = require('path');
 
 try {
-  // مسار الملف السري المُخزن في Render
   const serviceAccountPath = '/etc/secrets/firebase-service-key.json';
 
-  // التحقق من وجود الملف أولًا
   if (!fs.existsSync(serviceAccountPath)) {
     throw new Error(`Service account file not found at path: ${serviceAccountPath}`);
   }
 
-  const serviceAccount = require(serviceAccountPath);
+  const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
 
-  // تهيئة تطبيق Firebase
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     storageBucket: 'wadd-f0a19.appspot.com',
